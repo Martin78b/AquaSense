@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="titulo">
+  <title id="titulo">AquaSense</title>
+  <!-- Logo original de AquaSense. Licencia MIT, igual que el resto del proyecto. -->
+  <defs>
+    <clipPath id="gota">
+      <path d="M128 18 C152 60 212 104 212 156 A84 84 0 0 1 44 156 C44 104 104 60 128 18 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Gota de agua (azul hortensia) -->
+  <path d="M128 18 C152 60 212 104 212 156 A84 84 0 0 1 44 156 C44 104 104 60 128 18 Z" fill="#4a6fa5"/>
+
+  <g clip-path="url(#gota)">
+    <!-- Tierra -->
+    <path d="M30 206 Q79 192 128 204 T226 200 V260 H30 Z" fill="#8a6a4f"/>
+    <!-- Brillo de la gota -->
+    <path d="M78 132 C80 108 96 84 112 62" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="9" stroke-linecap="round"/>
+  </g>
+
+  <!-- Brote (verde hoja claro) -->
+  <path d="M128 206 V130" fill="none" stroke="#dff0e3" stroke-width="9" stroke-linecap="round"/>
+  <path d="M128 164 C102 164 84 148 80 120 C106 118 126 134 128 164 Z" fill="#dff0e3"/>
+  <path d="M128 144 C130 114 152 94 184 94 C182 124 158 144 128 144 Z" fill="#9fd3aa"/>
+</svg>

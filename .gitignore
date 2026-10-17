@@ -1,0 +1,12 @@
+# Credenciales del WiFi
+riego/secrets.h
+
+# PlatformIO
+.pio/
+.vscode/
+
+# Arduino CLI
+build/
+
+# macOS
+.DS_Store
