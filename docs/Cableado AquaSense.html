@@ -1,0 +1,332 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Cableado AquaSense</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: plano de taller — un diagrama grande, leyenda y tabla de conexiones debajo, en una sola columna */
+:root {
+  --bg: #f2f5f3; --fg: #18211d; --muted: #5a6761; --line: #d3dbd7; --card: #ffffff;
+  --w5v: #d2382d; --wgnd: #2b302e; --w33: #d98500; --wsig: #2766d0; --wsen: #17915a; --cable: #8b938f;
+  --pcb-esp: #1f2b3b; --pcb-uln: #2b6449; --pcb-sen: #262626; --pump: #3b4754; --pcbtext: #eef3f0; --gold: #c9a227;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111715; --fg: #e3eae6; --muted: #93a19a; --line: #2b3531; --card: #19211e;
+    --w5v: #ff6b5e; --wgnd: #c7cfcb; --w33: #ffb23e; --wsig: #6fa3ff; --wsen: #4fd18f; --cable: #7c8581;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111715; --fg: #e3eae6; --muted: #93a19a; --line: #2b3531; --card: #19211e;
+  --w5v: #ff6b5e; --wgnd: #c7cfcb; --w33: #ffb23e; --wsig: #6fa3ff; --wsen: #4fd18f; --cable: #7c8581;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 56px;
+}
+main { max-width: 1180px; margin: 0 auto; display: grid; gap: 32px; }
+header { display: grid; gap: 8px; max-width: 70ch; }
+h1 { font-family: var(--font-display); font-size: 2rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-size: 1.2rem; margin: 0 0 12px; text-wrap: balance; }
+p { margin: 0; }
+.lead { color: var(--muted); }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 12px; }
+.scroll { overflow-x: auto; }
+.scroll svg { display: block; width: 100%; min-width: 900px; height: auto; }
+figcaption { color: var(--muted); font-size: 14px; max-width: 80ch; }
+
+svg text { font-family: var(--font-mono); }
+.t { fill: var(--fg); font-size: 12px; }
+.tm { fill: var(--muted); font-size: 11px; }
+.tp { fill: var(--pcbtext); font-size: 10.5px; }
+.tpd { fill: var(--pcbtext); font-size: 10.5px; opacity: .45; }
+.tb { fill: var(--pcbtext); font-size: 13px; font-weight: 500; }
+.w { fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.w5v { stroke: var(--w5v); } .wgnd { stroke: var(--wgnd); } .w33 { stroke: var(--w33); }
+.wsig { stroke: var(--wsig); } .wsen { stroke: var(--wsen); }
+.rail { stroke-width: 7; stroke-linecap: round; fill: none; }
+.cable { fill: none; stroke: var(--cable); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.dot5v { fill: var(--w5v); } .dotgnd { fill: var(--wgnd); } .dot33 { fill: var(--w33); }
+.pin { fill: var(--gold); } .pinoff { fill: var(--gold); opacity: .4; }
+.l5v { fill: var(--w5v); } .lgnd { fill: var(--fg); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 10px 22px; list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.legend li { display: flex; align-items: center; gap: 8px; }
+.sw { width: 26px; height: 5px; border-radius: 3px; flex: none; }
+
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 820px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 500; }
+td.mono { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+tr.group td { padding-top: 16px; font-weight: 600; border-bottom: none; }
+.chip { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.warn { border-left: 3px solid var(--w5v); padding: 2px 0 2px 12px; }
+</style>
+
+<main>
+  <header>
+    <span class="eyebrow">AquaSense · ESP32 + ULN2003 + 3 bombas</span>
+    <h1>Cableado AquaSense</h1>
+    <p class="lead">Cómo se conecta todo en la protoboard, alimentado desde un alargador con dos puertos USB: uno para el ESP32 y otro, con un cable USB cortado, para las bombas.</p>
+  </header>
+
+  <figure>
+    <div class="scroll">
+      <svg viewBox="0 0 1200 800" role="img" aria-label="Diagrama de cableado: el puerto USB 1 alimenta el ESP32; el puerto USB 2, con un cable cortado, alimenta el ULN2003 y las bombas; los GPIO 25, 26 y 27 controlan IN1 a IN3; los sensores usan 3,3 V y los GPIO 32, 33 y 34; todas las masas van a un riel GND común.">
+
+        <!-- ===== Alargador ===== -->
+        <rect x="930" y="20" width="240" height="68" rx="10" fill="var(--card)" stroke="var(--muted)" stroke-width="1.5"/>
+        <text class="tm" x="1050" y="40" text-anchor="middle">alargador</text>
+        <rect x="975" y="70" width="40" height="18" rx="2" fill="var(--muted)"/>
+        <rect x="1085" y="70" width="40" height="18" rx="2" fill="var(--muted)"/>
+        <text class="t" x="995" y="62" text-anchor="middle">USB 1</text>
+        <text class="t" x="1105" y="62" text-anchor="middle">USB 2</text>
+
+        <!-- Cable USB 1 al ESP32 -->
+        <polyline class="cable" points="995,88 995,181 878,181"/>
+        <text class="tm" x="985" y="140" text-anchor="end">micro USB</text>
+
+        <!-- Cable USB 2 cortado -->
+        <polyline class="cable" points="1105,88 1105,250"/>
+        <text class="t" x="1095" y="205" text-anchor="end">cable USB cortado</text>
+        <text class="tm" x="1095" y="221" text-anchor="end">verde y blanco: aislados</text>
+        <polyline class="w w5v" points="1112,250 1112,428 860,428 860,452"/>
+        <polyline class="w wgnd" points="1098,250 1098,375"/>
+        <text class="t l5v" x="1122" y="300">rojo</text>
+        <text class="t l5v" x="1122" y="315">+5 V</text>
+        <text class="tm" x="1088" y="300" text-anchor="end">negro</text>
+        <text class="tm" x="1088" y="315" text-anchor="end">GND</text>
+
+        <!-- ===== Rieles de la protoboard ===== -->
+        <line class="rail w33" x1="150" y1="345" x2="500" y2="345"/>
+        <line class="rail wgnd" x1="150" y1="375" x2="1098" y2="375"/>
+        <text class="t" x="140" y="349" text-anchor="end">riel 3,3 V</text>
+        <text class="t" x="140" y="379" text-anchor="end">riel GND</text>
+
+        <!-- ===== ESP32 ===== -->
+        <rect x="250" y="100" width="600" height="165" rx="6" fill="var(--pcb-esp)"/>
+        <rect x="258" y="125" width="55" height="95" rx="3" fill="none" stroke="var(--pcbtext)" stroke-opacity=".35" stroke-dasharray="4 3"/>
+        <text class="tpd" x="285" y="176" text-anchor="middle">antena</text>
+        <rect x="320" y="125" width="150" height="95" rx="3" fill="#9aa3ad"/>
+        <text x="395" y="177" text-anchor="middle" font-size="11" fill="#1f2b3b">ESP32-WROOM-32</text>
+        <text class="tb" x="640" y="170" text-anchor="middle">NodeMCU ESP-32S</text>
+        <rect x="770" y="132" width="36" height="22" rx="3" fill="#0f1620" stroke="var(--pcbtext)" stroke-opacity=".4"/>
+        <text class="tp" x="788" y="168" text-anchor="middle">BOOT</text>
+        <rect x="850" y="165" width="28" height="32" rx="3" fill="#b9c0c6"/>
+
+        <!-- fila de pines superior (no se usa) -->
+        <g class="pinoff">
+          <circle cx="280" cy="112" r="4"/><circle cx="310" cy="112" r="4"/><circle cx="340" cy="112" r="4"/><circle cx="370" cy="112" r="4"/><circle cx="400" cy="112" r="4"/><circle cx="430" cy="112" r="4"/><circle cx="460" cy="112" r="4"/><circle cx="490" cy="112" r="4"/><circle cx="520" cy="112" r="4"/><circle cx="550" cy="112" r="4"/><circle cx="580" cy="112" r="4"/><circle cx="610" cy="112" r="4"/><circle cx="640" cy="112" r="4"/><circle cx="670" cy="112" r="4"/><circle cx="700" cy="112" r="4"/><circle cx="730" cy="112" r="4"/><circle cx="760" cy="112" r="4"/><circle cx="790" cy="112" r="4"/><circle cx="820" cy="112" r="4"/>
+        </g>
+        <text class="tm" x="550" y="92" text-anchor="middle">este lateral no se usa</text>
+
+        <!-- fila de pines inferior: 3V3 … 5V -->
+        <g>
+          <circle class="pin" cx="280" cy="253" r="5"/><circle class="pinoff" cx="310" cy="253" r="4"/><circle class="pinoff" cx="340" cy="253" r="4"/><circle class="pinoff" cx="370" cy="253" r="4"/><circle class="pin" cx="400" cy="253" r="5"/><circle class="pinoff" cx="430" cy="253" r="4"/><circle class="pin" cx="460" cy="253" r="5"/><circle class="pin" cx="490" cy="253" r="5"/><circle class="pin" cx="520" cy="253" r="5"/><circle class="pin" cx="550" cy="253" r="5"/><circle class="pin" cx="580" cy="253" r="5"/><circle class="pinoff" cx="610" cy="253" r="4"/><circle class="pinoff" cx="640" cy="253" r="4"/><circle class="pin" cx="670" cy="253" r="5"/><circle class="pinoff" cx="700" cy="253" r="4"/><circle class="pinoff" cx="730" cy="253" r="4"/><circle class="pinoff" cx="760" cy="253" r="4"/><circle class="pinoff" cx="790" cy="253" r="4"/><circle class="pinoff" cx="820" cy="253" r="4"/>
+        </g>
+        <g text-anchor="middle">
+          <text class="tp" x="280" y="238">3V3</text><text class="tpd" x="310" y="238">EN</text><text class="tpd" x="340" y="238">SVP</text><text class="tpd" x="370" y="238">SVN</text><text class="tp" x="400" y="238">34</text><text class="tpd" x="430" y="238">35</text><text class="tp" x="460" y="238">32</text><text class="tp" x="490" y="238">33</text><text class="tp" x="520" y="238">25</text><text class="tp" x="550" y="238">26</text><text class="tp" x="580" y="238">27</text><text class="tpd" x="610" y="238">14</text><text class="tpd" x="640" y="238">12</text><text class="tp" x="670" y="238">GND</text><text class="tpd" x="700" y="238">13</text><text class="tpd" x="730" y="238">SD2</text><text class="tpd" x="760" y="238">SD3</text><text class="tpd" x="790" y="238">CMD</text><text class="tpd" x="820" y="238">5V</text>
+        </g>
+        <text class="t l5v" x="820" y="284" text-anchor="middle">5V: sin conectar</text>
+
+        <!-- ESP32 a rieles -->
+        <polyline class="w w33" points="280,253 280,345"/>
+        <polyline class="w wgnd" points="670,253 670,375"/>
+
+        <!-- ESP32 a ULN2003 (control de bombas) -->
+        <polyline class="w wsig" points="520,253 520,420 660,420 660,452"/>
+        <polyline class="w wsig" points="550,253 550,410 690,410 690,452"/>
+        <polyline class="w wsig" points="580,253 580,400 720,400 720,452"/>
+
+        <!-- ===== Sensores ===== -->
+        <!-- sensor 1 -->
+        <rect x="160" y="440" width="100" height="80" rx="6" fill="var(--pcb-sen)"/>
+        <polygon points="160,515 260,515 240,690 210,706 180,690" fill="var(--pcb-sen)"/>
+        <line x1="166" y1="560" x2="254" y2="560" stroke="var(--pcbtext)" stroke-opacity=".5" stroke-dasharray="4 3"/>
+        <rect x="190" y="485" width="40" height="22" rx="2" fill="#0d0d0d"/>
+        <text class="tp" x="210" y="500" text-anchor="middle" font-size="9">TLC555</text>
+        <circle class="pin" cx="180" cy="452" r="4"/><circle class="pin" cx="210" cy="452" r="4"/><circle class="pin" cx="240" cy="452" r="4"/>
+        <text class="tp" x="180" y="472" text-anchor="middle" font-size="8.5">AOUT</text><text class="tp" x="210" y="472" text-anchor="middle" font-size="8.5">VCC</text><text class="tp" x="240" y="472" text-anchor="middle" font-size="8.5">GND</text>
+        <text class="t" x="210" y="728" text-anchor="middle">sensor 1</text>
+        <text class="tm" x="210" y="744" text-anchor="middle">maceta 1 · GPIO 32</text>
+
+        <!-- sensor 2 -->
+        <rect x="290" y="440" width="100" height="80" rx="6" fill="var(--pcb-sen)"/>
+        <polygon points="290,515 390,515 370,690 340,706 310,690" fill="var(--pcb-sen)"/>
+        <line x1="296" y1="560" x2="384" y2="560" stroke="var(--pcbtext)" stroke-opacity=".5" stroke-dasharray="4 3"/>
+        <rect x="320" y="485" width="40" height="22" rx="2" fill="#0d0d0d"/>
+        <text class="tp" x="340" y="500" text-anchor="middle" font-size="9">TLC555</text>
+        <circle class="pin" cx="310" cy="452" r="4"/><circle class="pin" cx="340" cy="452" r="4"/><circle class="pin" cx="370" cy="452" r="4"/>
+        <text class="tp" x="310" y="472" text-anchor="middle" font-size="8.5">AOUT</text><text class="tp" x="340" y="472" text-anchor="middle" font-size="8.5">VCC</text><text class="tp" x="370" y="472" text-anchor="middle" font-size="8.5">GND</text>
+        <text class="t" x="340" y="728" text-anchor="middle">sensor 2</text>
+        <text class="tm" x="340" y="744" text-anchor="middle">maceta 2 · GPIO 33</text>
+
+        <!-- sensor 3 -->
+        <rect x="420" y="440" width="100" height="80" rx="6" fill="var(--pcb-sen)"/>
+        <polygon points="420,515 520,515 500,690 470,706 440,690" fill="var(--pcb-sen)"/>
+        <line x1="426" y1="560" x2="514" y2="560" stroke="var(--pcbtext)" stroke-opacity=".5" stroke-dasharray="4 3"/>
+        <rect x="450" y="485" width="40" height="22" rx="2" fill="#0d0d0d"/>
+        <text class="tp" x="470" y="500" text-anchor="middle" font-size="9">TLC555</text>
+        <circle class="pin" cx="440" cy="452" r="4"/><circle class="pin" cx="470" cy="452" r="4"/><circle class="pin" cx="500" cy="452" r="4"/>
+        <text class="tp" x="440" y="472" text-anchor="middle" font-size="8.5">AOUT</text><text class="tp" x="470" y="472" text-anchor="middle" font-size="8.5">VCC</text><text class="tp" x="500" y="472" text-anchor="middle" font-size="8.5">GND</text>
+        <text class="t" x="470" y="728" text-anchor="middle">sensor 3</text>
+        <text class="tm" x="470" y="744" text-anchor="middle">maceta 3 · GPIO 34</text>
+
+        <text class="tm" x="340" y="580" text-anchor="middle" fill="var(--pcbtext)" style="fill:var(--pcbtext);opacity:.7">enterrar hasta la línea</text>
+
+        <!-- sensores: alimentación -->
+        <polyline class="w w33" points="210,452 210,345"/>
+        <polyline class="w w33" points="340,452 340,345"/>
+        <polyline class="w w33" points="470,452 470,345"/>
+        <polyline class="w wgnd" points="240,452 240,375"/>
+        <polyline class="w wgnd" points="370,452 370,375"/>
+        <polyline class="w wgnd" points="500,452 500,375"/>
+        <!-- sensores: señal -->
+        <polyline class="w wsen" points="180,452 180,305 460,305 460,253"/>
+        <polyline class="w wsen" points="310,452 310,320 490,320 490,253"/>
+        <polyline class="w wsen" points="440,452 440,275 400,275 400,253"/>
+
+        <!-- ===== ULN2003 ===== -->
+        <rect x="640" y="440" width="270" height="190" rx="6" fill="var(--pcb-uln)"/>
+        <circle class="pin" cx="660" cy="452" r="4"/><circle class="pin" cx="690" cy="452" r="4"/><circle class="pin" cx="720" cy="452" r="4"/><circle class="pinoff" cx="750" cy="452" r="4"/>
+        <circle class="pin" cx="830" cy="452" r="4"/><circle class="pin" cx="860" cy="452" r="4"/>
+        <g text-anchor="middle">
+          <text class="tp" x="660" y="472">IN1</text><text class="tp" x="690" y="472">IN2</text><text class="tp" x="720" y="472">IN3</text><text class="tpd" x="750" y="472">IN4</text>
+          <text class="tp" x="830" y="472" font-size="13">−</text><text class="tp" x="860" y="472" font-size="13">+</text>
+        </g>
+        <rect x="884" y="450" width="14" height="26" rx="2" fill="#141414"/>
+        <text class="tp" x="891" y="492" text-anchor="middle" font-size="9">jumper</text>
+        <g fill="#ff5a4a" opacity=".85">
+          <circle cx="680" cy="510" r="6"/><circle cx="710" cy="510" r="6"/><circle cx="740" cy="510" r="6"/><circle cx="770" cy="510" r="6"/>
+        </g>
+        <g text-anchor="middle">
+          <text class="tp" x="680" y="532">A</text><text class="tp" x="710" y="532">B</text><text class="tp" x="740" y="532">C</text><text class="tp" x="770" y="532">D</text>
+        </g>
+        <rect x="800" y="500" width="80" height="40" rx="2" fill="#141414"/>
+        <text class="tp" x="840" y="524" text-anchor="middle">ULN2003</text>
+        <text class="tb" x="725" y="570" text-anchor="middle" font-size="11">conector blanco</text>
+        <rect x="690" y="598" width="150" height="26" rx="2" fill="#f1f1ee"/>
+        <g text-anchor="middle" font-size="10" fill="#222">
+          <text x="705" y="615">A</text><text x="735" y="615">B</text><text x="765" y="615">C</text><text x="795" y="615">D</text><text x="825" y="615">C+</text>
+        </g>
+        <text class="tp" x="870" y="615" font-size="9.5">común</text>
+
+        <!-- Capacitor -->
+        <line x1="960" y1="375" x2="960" y2="388" stroke="var(--wgnd)" stroke-width="2"/>
+        <line x1="960" y1="414" x2="960" y2="428" stroke="var(--w5v)" stroke-width="2"/>
+        <rect x="949" y="388" width="22" height="26" rx="4" fill="#24448f"/>
+        <rect x="949" y="388" width="7" height="26" rx="2" fill="#c9d3e4"/>
+        <text class="t" x="980" y="398">1000 µF · 16 V</text>
+        <text class="tm" x="980" y="413">franja (−) hacia GND</text>
+
+        <!-- masas unidas -->
+        <polyline class="w wgnd" points="830,452 830,375"/>
+        <text class="tm" x="838" y="400">masas unidas</text>
+
+        <!-- ===== Bombas ===== -->
+        <!-- común (+) a las tres bombas -->
+        <polyline class="w w5v" points="825,624 825,645"/>
+        <polyline class="w w5v" points="692,645 988,645"/>
+        <polyline class="w w5v" points="692,645 692,690"/>
+        <polyline class="w w5v" points="848,645 848,690"/>
+        <polyline class="w w5v" points="988,645 988,690"/>
+        <!-- negativos a A, B y C -->
+        <polyline class="w wgnd" points="705,624 705,690"/>
+        <polyline class="w wgnd" points="735,624 735,676 832,676 832,690"/>
+        <polyline class="w wgnd" points="765,624 765,662 972,662 972,690"/>
+
+        <rect x="678" y="690" width="44" height="58" rx="8" fill="var(--pump)"/>
+        <rect x="818" y="690" width="44" height="58" rx="8" fill="var(--pump)"/>
+        <rect x="958" y="690" width="44" height="58" rx="8" fill="var(--pump)"/>
+        <g text-anchor="middle">
+          <text class="t" x="700" y="770">bomba 1</text><text class="tm" x="700" y="786">salida A</text>
+          <text class="t" x="840" y="770">bomba 2</text><text class="tm" x="840" y="786">salida B</text>
+          <text class="t" x="980" y="770">bomba 3</text><text class="tm" x="980" y="786">salida C</text>
+        </g>
+        <text class="tm" x="1040" y="712">rojo de la bomba → común</text>
+        <text class="tm" x="1040" y="728">negro de la bomba → A, B o C</text>
+
+        <!-- puntos de unión -->
+        <g class="dot33"><circle cx="280" cy="345" r="5"/><circle cx="210" cy="345" r="5"/><circle cx="340" cy="345" r="5"/><circle cx="470" cy="345" r="5"/></g>
+        <g class="dotgnd"><circle cx="670" cy="375" r="5"/><circle cx="240" cy="375" r="5"/><circle cx="370" cy="375" r="5"/><circle cx="500" cy="375" r="5"/><circle cx="830" cy="375" r="5"/><circle cx="960" cy="375" r="5"/><circle cx="1098" cy="375" r="5"/></g>
+        <g class="dot5v"><circle cx="960" cy="428" r="5"/><circle cx="825" cy="645" r="5"/><circle cx="1112" cy="250" r="4"/></g>
+      </svg>
+    </div>
+    <figcaption>El ESP32 está dibujado con la antena a la izquierda y el USB a la derecha: así los pines que se usan quedan todos en el lateral de abajo, en el orden real de la placa (3V3 … 5V). Los cables que se cruzan sin un punto no están unidos. Verificá los nombres con la serigrafía de tu placa antes de conectar.</figcaption>
+  </figure>
+
+  <ul class="legend" aria-label="Colores de los cables">
+    <li><span class="sw" style="background:var(--w5v)"></span>+5 V de las bombas (USB 2)</li>
+    <li><span class="sw" style="background:var(--wgnd)"></span>GND, todo al mismo riel</li>
+    <li><span class="sw" style="background:var(--w33)"></span>3,3 V de los sensores</li>
+    <li><span class="sw" style="background:var(--wsig)"></span>control de bombas</li>
+    <li><span class="sw" style="background:var(--wsen)"></span>señal de los sensores</li>
+    <li><span class="sw" style="background:var(--cable);height:8px"></span>cable USB</li>
+  </ul>
+
+  <div class="grid2">
+    <section>
+      <h2>Conexión por conexión</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Desde</th><th>Hasta</th></tr></thead>
+          <tbody>
+            <tr class="group"><td colspan="2">Alimentación</td></tr>
+            <tr><td>Alargador USB 1</td><td>micro USB del ESP32</td></tr>
+            <tr><td><span class="chip" style="background:var(--w5v)"></span>USB 2, cable rojo</td><td class="mono">ULN2003 +</td></tr>
+            <tr><td><span class="chip" style="background:var(--wgnd)"></span>USB 2, cable negro</td><td>riel GND</td></tr>
+            <tr><td>Capacitor, pata larga (+)</td><td class="mono">ULN2003 +</td></tr>
+            <tr><td>Capacitor, franja (−)</td><td>riel GND</td></tr>
+            <tr><td class="mono">ESP32 3V3</td><td>riel 3,3 V</td></tr>
+            <tr><td class="mono">ESP32 GND</td><td>riel GND</td></tr>
+            <tr><td class="mono">ULN2003 −</td><td>riel GND</td></tr>
+            <tr class="group"><td colspan="2">Bombas</td></tr>
+            <tr><td class="mono"><span class="chip" style="background:var(--wsig)"></span>GPIO 25 / 26 / 27</td><td class="mono">IN1 / IN2 / IN3</td></tr>
+            <tr><td>Conector blanco, común</td><td>rojo de las 3 bombas</td></tr>
+            <tr><td class="mono">A / B / C</td><td>negro de la bomba 1 / 2 / 3</td></tr>
+            <tr class="group"><td colspan="2">Sensores (cuando lleguen)</td></tr>
+            <tr><td>VCC de cada sensor</td><td>riel 3,3 V</td></tr>
+            <tr><td>GND de cada sensor</td><td>riel GND</td></tr>
+            <tr><td><span class="chip" style="background:var(--wsen)"></span>AOUT sensor 1 / 2 / 3</td><td class="mono">GPIO 32 / 33 / 34</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="display:grid;gap:24px">
+      <div>
+        <h2>Antes de enchufar</h2>
+        <ul class="rules">
+          <li class="warn">El pin 5V/VIN del ESP32 queda sin conectar. Las bombas nunca se alimentan desde la placa.</li>
+          <li>El 3,3 V y el 5 V nunca se tocan. Solo los GND van juntos.</li>
+          <li>El jumper del ULN2003, al lado de los pines + y −, tiene que estar puesto.</li>
+          <li>Las bombas no funcionan nunca en seco.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Orden de prueba</h2>
+        <ol>
+          <li>Solo el ULN2003, sin bombas: en <span style="font-family:var(--font-mono)">riego.local</span>, tocá Regar en la maceta 1 y fijate que se prenda el LED A. Repetí con las macetas 2 y 3.</li>
+          <li>Una bomba en un vaso con agua. Después las otras dos.</li>
+          <li>Los sensores al final, y calibralos antes de activarlos desde la web.</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+</main>
+
+</body></html>

@@ -52,6 +52,8 @@ platformio.ini             alternativa al Arduino IDE
 
 ## Conexiones
 
+Si alimentás todo desde un alargador con dos puertos USB, mirá [`docs/conexiones.md`](docs/conexiones.md).
+
 ```
  CARGADOR DE CELULAR 5 V                    CARGADOR RASPBERRY PI 5,1 V 3 A
         │ micro USB                                  │ USB-C (placa breakout)
