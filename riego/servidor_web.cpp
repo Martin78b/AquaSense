@@ -189,6 +189,25 @@ static void handlePrueba() {
   server.send(200, "text/plain", "Mensaje en camino. Si no te llega en unos segundos, mirá el estado de la conexión.");
 }
 
+static void handleWifiPost() {
+  if (!server.hasArg("ssid")) {
+    server.send(400, "text/plain", "Falta el nombre de la red WiFi.");
+    return;
+  }
+  String s = server.arg("ssid");
+  s.trim();
+  if (s.length() == 0) {
+    server.send(400, "text/plain", "El nombre de la red no puede estar vacío.");
+    return;
+  }
+  String p = server.hasArg("pass") ? server.arg("pass") : "";
+  guardarWifi(s, p);
+  Serial.printf("WiFi actualizado desde la web: %s. Reiniciando...\n", s.c_str());
+  server.send(200, "text/plain", "Red WiFi guardada en NVS. Reiniciando el ESP32 para conectar...");
+  delay(1000);
+  ESP.restart();
+}
+
 void iniciarServidorWeb() {
   server.on("/", HTTP_GET, handlePagina);
   server.on("/api/estado", HTTP_GET, handleEstado);
@@ -198,6 +217,7 @@ void iniciarServidorWeb() {
   server.on("/api/detener", HTTP_POST, handleDetener);
   server.on("/api/pausa", HTTP_POST, handlePausa);
   server.on("/api/telegram/prueba", HTTP_POST, handlePrueba);
+  server.on("/api/wifi", HTTP_POST, handleWifiPost);
   iniciarOTA(server);
   server.begin();
 }

@@ -64,7 +64,10 @@ extern Horario hor[MAX_HORARIOS];
 extern ConfigTelegram tg;   // escrita solo desde el programa principal, con el mutex de telegram.h
 extern int maxSegundos;
 extern bool pausa;
+extern String wifiSsid;
+extern String wifiPass;
 
 void cargarConfig();
 void guardarConfig();
 void guardarPausa();
+void guardarWifi(const String& ssid, const String& pass);

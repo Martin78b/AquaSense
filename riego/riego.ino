@@ -9,7 +9,10 @@
 #if __has_include("secrets.h")
 #include "secrets.h"
 #else
-#error "Falta secrets.h: copiá secrets.example.h como secrets.h y cargá tu red WiFi."
+// Si no existe secrets.h (por ejemplo en builds genéricos o GitHub Actions),
+// se usarán las credenciales ya guardadas en la memoria NVS del ESP32.
+#define WIFI_SSID ""
+#define WIFI_PASS ""
 #endif
 
 #include <WiFi.h>
@@ -36,14 +39,25 @@ void setup() {
 
   WiFi.mode(WIFI_STA);
   WiFi.setAutoReconnect(true);
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
-  Serial.print("Conectando a WiFi");
+
+  if (wifiSsid.length() > 0) {
+    Serial.printf("Conectando a WiFi: %s\n", wifiSsid.c_str());
+    WiFi.begin(wifiSsid.c_str(), wifiPass.c_str());
+  } else {
+    Serial.println("Sin WiFi en NVS. Intentando caché interna del ESP32...");
+    WiFi.begin();
+  }
+
+  Serial.print("Buscando red");
   unsigned long inicio = millis();
   while (WiFi.status() != WL_CONNECTED && millis() - inicio < 20000) {
     delay(500);
     Serial.print(".");
   }
   if (WiFi.status() == WL_CONNECTED) {
+    if (wifiSsid.length() == 0 && WiFi.SSID().length() > 0) {
+      guardarWifi(WiFi.SSID(), WiFi.psk());
+    }
     Serial.print(" conectado. Web en http://");
     Serial.println(WiFi.localIP());
   } else {

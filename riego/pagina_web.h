@@ -98,11 +98,29 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--hortensia);outl
 </section>
 
 <section class="tab" id="t-sistema">
-<h2>Sistema y Actualizaciones</h2>
+<h2>Sistema</h2>
 <div class="panel">
 <div class="campo"><span>Versión instalada</span><span style="font-weight:600" id="sisVer">v1.0.0</span></div>
 <div class="campo"><span>Repositorio GitHub</span><span class="suave" id="sisRepo">Martin78b/AquaSense</span></div>
+<div class="campo"><span>Red WiFi conectada</span><span class="suave" id="sisWifi">…</span></div>
 <div class="campo"><span>Memoria libre (Heap)</span><span class="suave" id="sisHeap">…</span></div>
+</div>
+
+<h2>Red WiFi (Memoria NVS)</h2>
+<div class="panel">
+<div class="suave" style="padding:4px 0 10px">Los datos de tu WiFi quedan guardados permanentemente en la memoria NVS del ESP32 y sobreviven a cualquier actualización OTA. Si cambiás de red o router, podés actualizarlos acá:</div>
+<div class="campo vertical">
+<label for="wfSsid">Nombre de red (SSID)</label>
+<input class="largo" id="wfSsid" placeholder="MiRedWiFi">
+</div>
+<div class="campo vertical" style="border-bottom:none">
+<label for="wfPass">Contraseña de red</label>
+<input class="largo" type="password" id="wfPass" placeholder="Nueva clave (dejá vacío para no cambiar)">
+</div>
+<div class="fila" style="margin-top:10px">
+<button class="chico" onclick="guardarWifi()">Guardar WiFi y conectar</button>
+</div>
+<div class="msg" id="msgWifi"></div>
 </div>
 
 <h2>Actualizar desde GitHub Releases</h2>
@@ -274,7 +292,27 @@ async function cargarInfoSistema(){
     $('sisVer').textContent='v'+d.version;
     $('sisRepo').textContent=d.repo;
     $('sisHeap').textContent=Math.round(d.heap/1024)+' KB';
+    if(d.wifiSsid) $('wfSsid').value=d.wifiSsid;
+    if(d.wifiIp) $('sisWifi').textContent=d.wifiSsid+' ('+d.wifiIp+')';
   }catch(e){}
+}
+
+async function guardarWifi(){
+  const s=$('wfSsid').value.trim(), p=$('wfPass').value;
+  if(!s){alert('Ingresá el nombre de la red WiFi.');return;}
+  if(!confirm(`¿Guardar red WiFi "${s}" en NVS y reiniciar el ESP32 para conectar?`)) return;
+  const res=$('msgWifi');res.textContent='Guardando y reiniciando…';res.className='msg';
+  try{
+    const body=new URLSearchParams({ssid:s,pass:p});
+    const r=await fetch('/api/wifi',{method:'POST',body});
+    if(r.ok){
+      esperarReinicio('Nueva red WiFi guardada.');
+    }else{
+      res.textContent=await r.text();res.className='msg error';
+    }
+  }catch(e){
+    res.textContent='Error al conectar con el ESP32.';res.className='msg error';
+  }
 }
 
 async function verificarGh(){

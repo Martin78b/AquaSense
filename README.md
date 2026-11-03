@@ -152,7 +152,7 @@ cp riego/secrets.example.h riego/secrets.h
 #define WIFI_PASS "tu clave"
 ```
 
-`riego/secrets.h` está en `.gitignore`. Si falta, la compilación se corta con un mensaje que te indica copiarlo. El ESP32 solo se conecta a redes de 2,4 GHz.
+`riego/secrets.h` está en `.gitignore`. Al arrancar por primera vez, el ESP32 guarda el SSID y la contraseña en su memoria interna no volátil (**NVS**). A partir de ese momento, los datos de red sobreviven a cualquier actualización OTA (incluso si descargás una versión pública genérica desde GitHub Releases). También podés cambiar de red WiFi desde la pestaña **Sistema** en la web sin conectar cables. El ESP32 solo se conecta a redes de 2,4 GHz.
 
 ## Puesta en marcha
 
@@ -210,6 +210,7 @@ Caudal 20 ml/s, calibración 2800 en seco y 1200 en mojado, sensores desactivado
 | `POST /api/detener` | Detiene el riego y vacía la cola |
 | `POST /api/pausa` | `on` = 1 o 0 |
 | `POST /api/telegram/prueba` | Envía un mensaje de prueba |
+| `POST /api/wifi` | Guarda nueva red WiFi en NVS y reinicia |
 | `GET /api/ota/info` | Información del sistema (versión, repo y memoria) |
 | `GET /api/ota/check` | Consulta la última release en GitHub |
 | `POST /api/ota/github` | Descarga e instala release desde GitHub |

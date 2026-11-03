@@ -1,11 +1,17 @@
 #include "config.h"
 #include <Preferences.h>
 
+#if __has_include("secrets.h")
+#include "secrets.h"
+#endif
+
 Maceta mac[N];
 Horario hor[MAX_HORARIOS];
 ConfigTelegram tg;
 int maxSegundos = 60;
 bool pausa = false;
+String wifiSsid = "";
+String wifiPass = "";
 
 static Preferences prefs;
 
@@ -68,7 +74,20 @@ void cargarConfig() {
   tg.resumenH     = prefs.getInt("rH", tg.resumenH);
   tg.resumenM     = prefs.getInt("rM", tg.resumenM);
   pausa           = prefs.getBool("pausa", false);
+  wifiSsid        = prefs.getString("wfSsid", "");
+  wifiPass        = prefs.getString("wfPass", "");
   prefs.end();
+
+#if defined(WIFI_SSID)
+  String secSsid = WIFI_SSID;
+  String secPass = WIFI_PASS;
+  secSsid.trim();
+  if (secSsid.length() > 0 && secSsid != "TU_RED" && secSsid != "nombre de tu red") {
+    if (wifiSsid.length() == 0 || wifiSsid != secSsid) {
+      guardarWifi(secSsid, secPass);
+    }
+  }
+#endif
 }
 
 void guardarConfig() {
@@ -107,5 +126,14 @@ void guardarConfig() {
 void guardarPausa() {
   prefs.begin("riego", false);
   prefs.putBool("pausa", pausa);
+  prefs.end();
+}
+
+void guardarWifi(const String& ssid, const String& pass) {
+  wifiSsid = ssid;
+  wifiPass = pass;
+  prefs.begin("riego", false);
+  prefs.putString("wfSsid", wifiSsid);
+  prefs.putString("wfPass", wifiPass);
   prefs.end();
 }

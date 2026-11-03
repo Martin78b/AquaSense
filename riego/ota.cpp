@@ -168,7 +168,9 @@ void iniciarOTA(WebServer& server) {
   server.on("/api/ota/info", HTTP_GET, [&server]() {
     String j = "{\"version\":\"" + String(AQUASENSE_VERSION) +
                "\",\"repo\":\"" + String(GITHUB_REPO) +
-               "\",\"heap\":" + String(ESP.getFreeHeap()) + "}";
+               "\",\"heap\":" + String(ESP.getFreeHeap()) +
+               ",\"wifiSsid\":\"" + jsonEsc(wifiSsid) + "\"" +
+               ",\"wifiIp\":\"" + WiFi.localIP().toString() + "\"}";
     server.send(200, "application/json", j);
   });
 
