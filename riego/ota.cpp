@@ -247,3 +247,4 @@ void iniciarOTA(WebServer& server) {
     }
   });
 }
+

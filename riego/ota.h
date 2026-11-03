@@ -7,3 +7,4 @@
 void iniciarOTA(WebServer& server);
 bool otaVerificarGitHub(String& nuevaVersion, String& urlDescarga, String& notas, String& err);
 bool otaActualizarDesdeUrl(const String& url, String& err);
+
