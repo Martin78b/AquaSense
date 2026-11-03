@@ -49,7 +49,7 @@ platformio.ini             configuración para compilar con PlatformIO
 | ESP32 | NodeMCU ESP-32S de 38 pines (Ai-Thinker ESP-32S, equivalente a WROOM-32), USB CP2102 |
 | Driver de bombas | Módulo ULN2003 (el de los motores 28BYJ-48). Se usan 3 de sus 4 canales |
 | Bombas | 3 mini bombas sumergibles de 3 a 5 V DC |
-| Sensores de humedad | 3 sensores capacitivos v1.2 |
+| Sensores de humedad | 3 sensores capacitivos V2.0.0 (tipo TLC555) |
 | Sensor de nivel del bidón (futuro) | Flotante o sin contacto XKC-Y25 |
 | Capacitor | Electrolítico de 1000 µF y 16 V (mínimo 10 V) |
 | Fuente del ESP32 | Cargador de celular de 5 V, por el micro USB |
@@ -93,7 +93,7 @@ Podés ver el plano interactivo de cableado en [`docs/Cableado AquaSense.html`](
 | ULN2003 "+" y "−" | 5,1 V y GND del cargador de la Raspberry Pi, con el jumper de alimentación puesto |
 | Capacitor de 1000 µF | Entre + y − en la entrada del ULN2003 (respetá la polaridad) |
 | Sensores de humedad (señal) | GPIO 32, 33, 34 (ADC1, que funciona con el WiFi activo) |
-| Sensores de humedad (alimentación) | 3,3 V y GND del ESP32, para no superar el rango del ADC |
+| Sensores de humedad (alimentación) | 3,3 V y GND del ESP32 (los sensores V2.0.0 con TLC555 funcionan nativamente a 3,3 V y quedan dentro del rango del ADC) |
 | Sensor de nivel (futuro) | GPIO 14 y GND |
 
 Reglas de alimentación:

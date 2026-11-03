@@ -5,7 +5,8 @@ void iniciarSensores() {
   analogReadResolution(12);                 // lecturas de 0 a 4095
 }
 
-// Los capacitivos dan valores más altos en seco y más bajos en mojado
+// Los sensores capacitivos V2.0.0 (TLC555 a 3,3 V) dan valores más altos en seco
+// (típicamente ~2800) y más bajos en mojado (típicamente ~1200).
 void leerSensores() {
   for (int i = 0; i < N; i++) {
     long suma = 0;

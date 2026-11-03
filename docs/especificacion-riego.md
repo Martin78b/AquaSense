@@ -21,7 +21,7 @@ Regar automáticamente tres macetas desde un bidón, con tres mini bombas sumerg
 | ESP32 | NodeMCU ESP-32S, 38 pines (módulo Ai-Thinker ESP-32S, equivalente a WROOM-32). Chip USB CP2102. En Arduino IDE: placa "NodeMCU-32S" o "ESP32 Dev Module" | Disponible |
 | Driver de bombas | Módulo ULN2003 (el de los motores paso a paso 28BYJ-48). Se usan 3 de sus 4 canales | Disponible |
 | Bombas | 3 mini bombas sumergibles de 3 a 5 V DC, dentro del bidón | Disponibles |
-| Sensores de humedad | 3 sensores capacitivos v1.2 | En camino |
+| Sensores de humedad | 3 sensores capacitivos V2.0.0 (tipo TLC555) | En camino |
 | Sensor de nivel del bidón | Flotante o sin contacto XKC-Y25 | Pendiente de compra |
 | Capacitor | Electrolítico 1000 µF, 16 V (mínimo 10 V) | Pendiente de compra |
 | Alimentación | Cargador de celular 5 V (para el ESP32) y cargador oficial de Raspberry Pi 4 de 5,1 V y 3 A (para las bombas), este último mediante una placa breakout USB-C hembra con resistencias de 5,1 kΩ | Disponibles |
@@ -87,9 +87,10 @@ Otros valores por defecto: caudal de cada bomba 20 ml/s (el usuario debe medirlo
 
 ## 5. Sensores de humedad
 
+- Sensores capacitivos **V2.0.0** basados en el circuito temporizador CMOS **TLC555**. Operan nativamente con 3,3 V (el TLC555 admite 2 V a 15 V, a diferencia de los clones v1.2 con NE555 bipolar que fallaban a 3,3 V), entregando una salida analógica segura para el ADC del ESP32 (0 a 3,3 V) sin necesidad de divisores ni adaptadores.
 - Lectura promediada de 8 muestras, cada 2 s, resolución de 12 bits (0 a 4095).
 - Conversión a porcentaje con la calibración de cada sensor: `map(lectura, seco, mojado, 0, 100)`, limitado a 0 a 100. Si seco y mojado son iguales, el porcentaje es 0.
-- Los sensores capacitivos dan valores **más altos en seco** y más bajos en mojado.
+- Los sensores capacitivos dan valores **más altos en seco** (~2800) y más bajos en mojado (~1200).
 - **Vienen desactivados.** Mientras no estén conectados, los pines quedan al aire y dan lecturas al azar; eso no debe disparar riegos.
 - Calibración desde la web: con la tierra seca se toca "Usar actual" en la lectura seca; después de regar, lo mismo en la lectura mojada. Recién entonces se activa "Regar según el sensor".
 

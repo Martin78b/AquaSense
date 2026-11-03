@@ -86,7 +86,7 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
 
   <figure>
     <div class="scroll">
-      <svg viewBox="0 0 1200 800" role="img" aria-label="Diagrama de cableado: el puerto USB 1 alimenta el ESP32; el puerto USB 2, con un cable cortado, alimenta el ULN2003 y las bombas; los GPIO 25, 26 y 27 controlan IN1 a IN3; los sensores usan 3,3 V y los GPIO 32, 33 y 34; todas las masas van a un riel GND común.">
+      <svg viewBox="0 0 1200 800" role="img" aria-label="Diagrama de cableado: el puerto USB 1 alimenta el ESP32; el puerto USB 2, con un cable cortado, alimenta el ULN2003 y las bombas; los GPIO 25, 26 y 27 controlan IN1 a IN3; los sensores capacitivos V2.0.0 (TLC555) usan 3,3 V y los GPIO 32, 33 y 34; todas las masas van a un riel GND común.">
 
         <!-- ===== Alargador ===== -->
         <rect x="930" y="20" width="240" height="68" rx="10" fill="var(--card)" stroke="var(--muted)" stroke-width="1.5"/>
@@ -161,7 +161,7 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
         <text class="tp" x="210" y="500" text-anchor="middle" font-size="9">TLC555</text>
         <circle class="pin" cx="180" cy="452" r="4"/><circle class="pin" cx="210" cy="452" r="4"/><circle class="pin" cx="240" cy="452" r="4"/>
         <text class="tp" x="180" y="472" text-anchor="middle" font-size="8.5">AOUT</text><text class="tp" x="210" y="472" text-anchor="middle" font-size="8.5">VCC</text><text class="tp" x="240" y="472" text-anchor="middle" font-size="8.5">GND</text>
-        <text class="t" x="210" y="728" text-anchor="middle">sensor 1</text>
+        <text class="t" x="210" y="728" text-anchor="middle">sensor 1 (V2.0.0)</text>
         <text class="tm" x="210" y="744" text-anchor="middle">maceta 1 · GPIO 32</text>
 
         <!-- sensor 2 -->
@@ -172,7 +172,7 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
         <text class="tp" x="340" y="500" text-anchor="middle" font-size="9">TLC555</text>
         <circle class="pin" cx="310" cy="452" r="4"/><circle class="pin" cx="340" cy="452" r="4"/><circle class="pin" cx="370" cy="452" r="4"/>
         <text class="tp" x="310" y="472" text-anchor="middle" font-size="8.5">AOUT</text><text class="tp" x="340" y="472" text-anchor="middle" font-size="8.5">VCC</text><text class="tp" x="370" y="472" text-anchor="middle" font-size="8.5">GND</text>
-        <text class="t" x="340" y="728" text-anchor="middle">sensor 2</text>
+        <text class="t" x="340" y="728" text-anchor="middle">sensor 2 (V2.0.0)</text>
         <text class="tm" x="340" y="744" text-anchor="middle">maceta 2 · GPIO 33</text>
 
         <!-- sensor 3 -->
@@ -183,7 +183,7 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
         <text class="tp" x="470" y="500" text-anchor="middle" font-size="9">TLC555</text>
         <circle class="pin" cx="440" cy="452" r="4"/><circle class="pin" cx="470" cy="452" r="4"/><circle class="pin" cx="500" cy="452" r="4"/>
         <text class="tp" x="440" y="472" text-anchor="middle" font-size="8.5">AOUT</text><text class="tp" x="470" y="472" text-anchor="middle" font-size="8.5">VCC</text><text class="tp" x="500" y="472" text-anchor="middle" font-size="8.5">GND</text>
-        <text class="t" x="470" y="728" text-anchor="middle">sensor 3</text>
+        <text class="t" x="470" y="728" text-anchor="middle">sensor 3 (V2.0.0)</text>
         <text class="tm" x="470" y="744" text-anchor="middle">maceta 3 · GPIO 34</text>
 
         <text class="tm" x="340" y="580" text-anchor="middle" fill="var(--pcbtext)" style="fill:var(--pcbtext);opacity:.7">enterrar hasta la línea</text>
@@ -297,7 +297,7 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
             <tr><td class="mono"><span class="chip" style="background:var(--wsig)"></span>GPIO 25 / 26 / 27</td><td class="mono">IN1 / IN2 / IN3</td></tr>
             <tr><td><span class="chip" style="background:var(--w5v)"></span>Fuente +5 V (cable rojo)</td><td>rojo (+) de las 3 bombas</td></tr>
             <tr><td class="mono">Conector blanco A / B / C</td><td>negro (−) de la bomba 1 / 2 / 3 (C+ sin usar)</td></tr>
-            <tr class="group"><td colspan="2">Sensores (cuando lleguen)</td></tr>
+            <tr class="group"><td colspan="2">Sensores capacitivos V2.0.0 (TLC555)</td></tr>
             <tr><td>VCC de cada sensor</td><td>riel 3,3 V</td></tr>
             <tr><td>GND de cada sensor</td><td>riel GND</td></tr>
             <tr><td><span class="chip" style="background:var(--wsen)"></span>AOUT sensor 1 / 2 / 3</td><td class="mono">GPIO 32 / 33 / 34</td></tr>

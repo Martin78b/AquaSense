@@ -46,9 +46,8 @@ Variante del circuito del [README](../README.md#conexiones) para alimentar todo 
 2. **Una bomba en un vaso con agua** (nunca en seco). Después las otras dos.
 3. **Sensores al final:** vienen desactivados en el firmware. Calibralos siguiendo el README ("2. Calibrá los sensores").
 
-## Sensores capacitivos v1.2
+## Sensores capacitivos V2.0.0 (tipo TLC555)
 
-- Preferí los que tienen el chip **TLC555** (a veces marcado "T5C"). El **NE555** necesita unos 4,5 V y a 3,3 V puede dar lecturas inestables o fijas.
-- Con NE555, probá primero a 3V3. Si las lecturas no sirven, alimentalo desde el pin **VIN** del ESP32 (unos 5 V con USB), pero solo si el sensor tiene el regulador **662K** (3 patas, al lado del conector).
-- Antes de conectar AOUT a un GPIO con el sensor alimentado a 5 V, medí AOUT con el sensor al aire: si pasa de 3,3 V, no lo conectes.
-- Clavá el sensor solo hasta la línea marcada y protegé la parte de arriba y los bordes cortados con termocontraíble o esmalte de uñas transparente.
+- Al ser versión **V2.0.0** con el integrado CMOS **TLC555** (a veces marcado "T5C" o "TLC555I"), funcionan de forma nativa y estable alimentados con **3,3 V**. El TLC555 opera desde 2 V hasta 15 V, a diferencia de los clones problemáticos v1.2 con NE555 bipolar que requerían 4,5 V o más.
+- **Alimentación directa:** se conectan a **3V3 y GND** del ESP32. Su salida analógica (AOUT) entrega valores entre ~1,2 V (mojado) y ~2,8–3,0 V (seco en el aire), quedando perfectamente dentro del rango de medición de los pines analógicos del ESP32 (GPIO 32, 33 y 34) sin riesgo de sobretensión ni necesidad de adaptadores ni divisores.
+- **Protección contra la humedad:** clavá el sensor en la tierra solo hasta la línea blanca marcada ("enterrar hasta la línea"). Para evitar que la humedad degrade la placa con el tiempo, sellá los bordes cortados del PCB (donde la fibra de vidrio puede absorber agua) y la zona de componentes electrónicos superior con barniz/esmalte de uñas transparente o termocontraíble.
