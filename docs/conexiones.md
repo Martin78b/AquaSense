@@ -17,14 +17,14 @@ Variante del circuito del [README](../README.md#conexiones) para alimentar todo 
 ```
  USB 1 ──micro USB──► ESP32                    USB 2 (cable cortado)
                                                  rojo +5V ──┬──► ULN2003 "+"
- ESP32 GPIO 25 ──────────► ULN2003 IN1                       │   (jumper puesto)
- ESP32 GPIO 26 ──────────► ULN2003 IN2           [1000µF]    │
- ESP32 GPIO 27 ──────────► ULN2003 IN3            + a "+"    │
- ESP32 GND ──────────────► ULN2003 "−" ◄─────────negro GND ──┘
+ ESP32 GPIO 25 ──────────► ULN2003 IN1                      ├──► + de las 3 bombas (rojo)
+ ESP32 GPIO 26 ──────────► ULN2003 IN2           [1000µF]   │   (jumper puesto)
+ ESP32 GPIO 27 ──────────► ULN2003 IN3            + a "+"   │
+ ESP32 GND ──────────────► ULN2003 "−" ◄─────────negro GND ─┘
                            (masas unidas, imprescindible)
 
  ULN2003, conector blanco de 5 pines:
-   pin común (el del cable rojo del motor) ──► + de las 3 bombas
+   (el pin común C+ queda libre; las bombas toman +5 V directo de la fuente)
    A ──► − bomba 1    B ──► − bomba 2    C ──► − bomba 3
 
  Sensores:
@@ -37,7 +37,7 @@ Variante del circuito del [README](../README.md#conexiones) para alimentar todo 
 
 - **Rieles separados:** un par para 3,3 V y GND (sensores) y el otro para 5 V y GND (bombas). Los dos GND se unen; el 3V3 y el 5 V, nunca.
 - **Capacitor:** la pata larga (+) va al "+" del ULN2003 y la de la franja (−) al "−".
-- **Bombas:** el cable rojo va al pin común y el negro a A, B o C. Al revés giran al revés y casi no bombean.
+- **Bombas:** el cable rojo (+) va directo al positivo (+5 V) de la fuente y el negro (−) a las salidas A, B o C del ULN2003 (el pin común C+ del conector blanco queda sin usar). Al revés giran al revés y casi no bombean.
 - **Ancho de la placa:** el NodeMCU de 38 pines tapa casi una protoboard común. Usá dos protoboards lado a lado, o dejá el ESP32 afuera y conectalo con cables dupont hembra-macho.
 
 ## Orden de armado y prueba

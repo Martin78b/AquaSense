@@ -223,7 +223,7 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
         <g text-anchor="middle" font-size="10" fill="#222">
           <text x="705" y="615">A</text><text x="735" y="615">B</text><text x="765" y="615">C</text><text x="795" y="615">D</text><text x="825" y="615">C+</text>
         </g>
-        <text class="tp" x="870" y="615" font-size="9.5">común</text>
+        <text class="tpd" x="878" y="615" font-size="9">C+ sin usar</text>
 
         <!-- Capacitor -->
         <line x1="960" y1="375" x2="960" y2="388" stroke="var(--wgnd)" stroke-width="2"/>
@@ -238,9 +238,8 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
         <text class="tm" x="838" y="400">masas unidas</text>
 
         <!-- ===== Bombas ===== -->
-        <!-- común (+) a las tres bombas -->
-        <polyline class="w w5v" points="825,624 825,645"/>
-        <polyline class="w w5v" points="692,645 988,645"/>
+        <!-- positivo (+5 V de la fuente) a las tres bombas -->
+        <polyline class="w w5v" points="1010,428 1010,645 692,645"/>
         <polyline class="w w5v" points="692,645 692,690"/>
         <polyline class="w w5v" points="848,645 848,690"/>
         <polyline class="w w5v" points="988,645 988,690"/>
@@ -257,13 +256,13 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
           <text class="t" x="840" y="770">bomba 2</text><text class="tm" x="840" y="786">salida B</text>
           <text class="t" x="980" y="770">bomba 3</text><text class="tm" x="980" y="786">salida C</text>
         </g>
-        <text class="tm" x="1040" y="712">rojo de la bomba → común</text>
+        <text class="tm" x="1040" y="712">rojo de las bombas → +5 V fuente</text>
         <text class="tm" x="1040" y="728">negro de la bomba → A, B o C</text>
 
         <!-- puntos de unión -->
         <g class="dot33"><circle cx="280" cy="345" r="5"/><circle cx="210" cy="345" r="5"/><circle cx="340" cy="345" r="5"/><circle cx="470" cy="345" r="5"/></g>
         <g class="dotgnd"><circle cx="670" cy="375" r="5"/><circle cx="240" cy="375" r="5"/><circle cx="370" cy="375" r="5"/><circle cx="500" cy="375" r="5"/><circle cx="830" cy="375" r="5"/><circle cx="960" cy="375" r="5"/><circle cx="1098" cy="375" r="5"/></g>
-        <g class="dot5v"><circle cx="960" cy="428" r="5"/><circle cx="825" cy="645" r="5"/><circle cx="1112" cy="250" r="4"/></g>
+        <g class="dot5v"><circle cx="960" cy="428" r="5"/><circle cx="1010" cy="428" r="5"/><circle cx="988" cy="645" r="5"/><circle cx="848" cy="645" r="5"/><circle cx="1112" cy="250" r="4"/></g>
       </svg>
     </div>
     <figcaption>El ESP32 está dibujado con la antena a la izquierda y el USB a la derecha: así los pines que se usan quedan todos en el lateral de abajo, en el orden real de la placa (3V3 … 5V). Los cables que se cruzan sin un punto no están unidos. Verificá los nombres con la serigrafía de tu placa antes de conectar.</figcaption>
@@ -287,7 +286,7 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
           <tbody>
             <tr class="group"><td colspan="2">Alimentación</td></tr>
             <tr><td>Alargador USB 1</td><td>micro USB del ESP32</td></tr>
-            <tr><td><span class="chip" style="background:var(--w5v)"></span>USB 2, cable rojo</td><td class="mono">ULN2003 +</td></tr>
+            <tr><td><span class="chip" style="background:var(--w5v)"></span>USB 2, cable rojo</td><td class="mono">ULN2003 + y positivo de las 3 bombas</td></tr>
             <tr><td><span class="chip" style="background:var(--wgnd)"></span>USB 2, cable negro</td><td>riel GND</td></tr>
             <tr><td>Capacitor, pata larga (+)</td><td class="mono">ULN2003 +</td></tr>
             <tr><td>Capacitor, franja (−)</td><td>riel GND</td></tr>
@@ -296,8 +295,8 @@ ol, ul.rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
             <tr><td class="mono">ULN2003 −</td><td>riel GND</td></tr>
             <tr class="group"><td colspan="2">Bombas</td></tr>
             <tr><td class="mono"><span class="chip" style="background:var(--wsig)"></span>GPIO 25 / 26 / 27</td><td class="mono">IN1 / IN2 / IN3</td></tr>
-            <tr><td>Conector blanco, común</td><td>rojo de las 3 bombas</td></tr>
-            <tr><td class="mono">A / B / C</td><td>negro de la bomba 1 / 2 / 3</td></tr>
+            <tr><td><span class="chip" style="background:var(--w5v)"></span>Fuente +5 V (cable rojo)</td><td>rojo (+) de las 3 bombas</td></tr>
+            <tr><td class="mono">Conector blanco A / B / C</td><td>negro (−) de la bomba 1 / 2 / 3 (C+ sin usar)</td></tr>
             <tr class="group"><td colspan="2">Sensores (cuando lleguen)</td></tr>
             <tr><td>VCC de cada sensor</td><td>riel 3,3 V</td></tr>
             <tr><td>GND de cada sensor</td><td>riel GND</td></tr>

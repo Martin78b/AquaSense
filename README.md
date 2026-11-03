@@ -19,6 +19,14 @@ La especificación completa está en [`docs/especificacion-riego.md`](docs/espec
 ## Estructura del repositorio
 
 ```
+3d/                        modelos para impresión 3D
+└── carcasa_aquasense.scad caja paramétrica sin tornillos (shield 78x69 mm + ULN2003)
+assets/                    gráficos del proyecto (logo oficial en SVG)
+docs/                      documentación técnica y esquemas
+├── Cableado AquaSense.html plano interactivo SVG / HTML del circuito
+├── conexiones.md          guía de cableado con alargador de 2 puertos USB
+├── especificacion-riego.md especificación completa de hardware y lógica
+└── riego_web.ino          implementación original monolítica de referencia
 riego/                     carpeta del sketch (abrí riego.ino con el Arduino IDE)
 ├── riego.ino              setup() y loop()
 ├── config.h / .cpp        pines, valores por defecto y persistencia (Preferences)
@@ -31,8 +39,7 @@ riego/                     carpeta del sketch (abrí riego.ino con el Arduino ID
 ├── utilidades.h / .cpp    hora, JSON y URL
 ├── secrets.example.h      plantilla de credenciales del WiFi
 └── secrets.h              tus credenciales (no se versiona)
-docs/                      especificación e implementación de referencia
-platformio.ini             alternativa al Arduino IDE
+platformio.ini             configuración para compilar con PlatformIO
 ```
 
 ## Lista de materiales
@@ -52,14 +59,15 @@ platformio.ini             alternativa al Arduino IDE
 
 ## Conexiones
 
-Si alimentás todo desde un alargador con dos puertos USB, mirá [`docs/conexiones.md`](docs/conexiones.md).
+Podés ver el plano interactivo de cableado en [`docs/Cableado AquaSense.html`](docs/Cableado AquaSense.html). Si alimentás todo desde un alargador con dos puertos USB, mirá [`docs/conexiones.md`](docs/conexiones.md).
 
 ```
  CARGADOR DE CELULAR 5 V                    CARGADOR RASPBERRY PI 5,1 V 3 A
         │ micro USB                                  │ USB-C (placa breakout)
         ▼                                            ▼
 ┌───────────────────────┐                     + ─────┬───────────► + ULN2003
-│  ESP32 NodeMCU-32S    │                            ═╧═ 1000 µF
+│  ESP32 NodeMCU-32S    │                            ├───────────► + de las 3 bombas (rojo)
+│                       │                            ═╧═ 1000 µF
 │                       │                     − ─────┴───────────► − ULN2003
 │  GPIO 25 ─────────────┼──► IN1 ULN2003                              ▲
 │  GPIO 26 ─────────────┼──► IN2 ULN2003                              │
@@ -67,10 +75,10 @@ Si alimentás todo desde un alargador con dos puertos USB, mirá [`docs/conexion
 │  GND ─────────────────┼─────────────────── masas unidas ────────────┘
 │  VIN (sin conectar)   │
 │                       │     ULN2003, conector blanco:
-│  3V3 ─────────────────┼──►  VCC de los 3 sensores     común (rojo) ──► + de las 3 bombas
-│  GND ─────────────────┼──►  GND de los 3 sensores     A ─────────────► − bomba 1
-│  GPIO 32 ◄────────────┼───  AOUT sensor 1             B ─────────────► − bomba 2
-│  GPIO 33 ◄────────────┼───  AOUT sensor 2             C ─────────────► − bomba 3
+│  3V3 ─────────────────┼──►  VCC de los 3 sensores     A ─────────────► − bomba 1
+│  GND ─────────────────┼──►  GND de los 3 sensores     B ─────────────► − bomba 2
+│  GPIO 32 ◄────────────┼───  AOUT sensor 1             C ─────────────► − bomba 3
+│  GPIO 33 ◄────────────┼───  AOUT sensor 2             (C+ queda sin usar)
 │  GPIO 34 ◄────────────┼───  AOUT sensor 3
 │  GPIO 14 ◄────────────┼───  sensor de nivel (futuro, a GND, pull-up interno)
 │  BOOT (GPIO 0): riego manual de las tres macetas
@@ -80,8 +88,8 @@ Si alimentás todo desde un alargador con dos puertos USB, mirá [`docs/conexion
 | Elemento | Conexión |
 |---|---|
 | Bomba 1, 2, 3 (control) | GPIO 25, 26, 27 → IN1, IN2, IN3 del ULN2003 |
-| Bombas (positivo) | Pin común del conector blanco del ULN2003 (el del cable rojo del motor) |
-| Bombas (negativo) | Salidas A, B y C del conector blanco |
+| Bombas (positivo) | Positivo (+5 V) directo de la fuente de energía (cable rojo compartido; no toman del pin C+ del ULN2003) |
+| Bombas (negativo) | Salidas A, B y C del conector blanco del ULN2003 (el pin común C+ queda sin usar) |
 | ULN2003 "+" y "−" | 5,1 V y GND del cargador de la Raspberry Pi, con el jumper de alimentación puesto |
 | Capacitor de 1000 µF | Entre + y − en la entrada del ULN2003 (respetá la polaridad) |
 | Sensores de humedad (señal) | GPIO 32, 33, 34 (ADC1, que funciona con el WiFi activo) |
@@ -90,6 +98,7 @@ Si alimentás todo desde un alargador con dos puertos USB, mirá [`docs/conexion
 
 Reglas de alimentación:
 
+- **Alimentación de las bombas:** el cable positivo (rojo) de las tres bombas se conecta directamente a los +5 V de la fuente de alimentación externa (cable rojo de la fuente), no desde el pin común C+ del conector blanco del ULN2003, evitando saturar las pistas de la placa driver.
 - **Uní las masas:** un cable entre el GND del ESP32 y el "−" del ULN2003. Sin eso, el ULN2003 no interpreta las señales.
 - **Nunca unas los positivos:** el pin VIN del ESP32 queda sin conectar. Así podés enchufar el ESP32 a la compu para programarlo sin desconectar las bombas.
 - No uses los GPIO 6 a 11 (CLK, SD0 a SD3 y CMD): están conectados a la flash.
@@ -202,10 +211,21 @@ Caudal 20 ml/s, calibración 2800 en seco y 1200 en mojado, sensores desactivado
 
 La web no tiene contraseña: cualquier dispositivo de tu red WiFi puede usarla.
 
+## Carcasa para impresión 3D
+
+En la carpeta [`3d/`](3d/) se incluye el modelo paramétrico [`carcasa_aquasense.scad`](3d/carcasa_aquasense.scad), compatible con [OpenSCAD](https://openscad.org/) o visores online como [ochafik.com/openscad2](https://ochafik.com/openscad2):
+
+- **100% sin tornillos:** las placas y la tapa calzan por presión (snap-fit). Las guías en "L" y clips elásticos aseguran el breakout shield del ESP32 (78 mm × 69 mm) y el módulo ULN2003 (35 mm × 32 mm).
+- **Apertura práctica:** tapa con cuatro trabas internas y muescas laterales para abrir fácil con los dedos.
+- **Conectividad:** calado a medida para el conector USB-C del ESP32 y orificio para ficha hembra Jack DC 5.5×2.1 mm.
+- **Organización interna:** cuna elástica dedicada para el capacitor electrolítico de 1000 µF, ventana de inspección para los LEDs del ULN2003 y 6 ranuras pasacables frontales en "U" (3 para sensores y 3 para bombas).
+- **Logo oficial:** grabado en relieve en la cara superior de la tapa.
+- **Fabricación:** diseñado para imprimirse sin soportes en tecnología FDM (PLA / PETG).
+
 ## Pendientes
 
 - Sensor de nivel del bidón en GPIO 14: bloquear las bombas si no hay agua, mostrarlo en la web y avisar por Telegram.
-- Piezas para imprimir en 3D (PETG o ASA): caja, tapa del bidón, capuchón de los sensores, soportes y difusores.
+- Piezas 3D complementarias: tapa adaptadora del bidón para mangueras, capuchón protector de sensores, soportes y difusores de maceta (la caja principal ya está disponible en [`3d/`](3d/)).
 - Validar el certificado de Telegram en lugar de `setInsecure()`.
 - Actualización por WiFi (OTA). El firmware ocupa cerca del 87 % de la partición por defecto, así que para OTA conviene elegir un esquema de particiones más grande (por ejemplo "Minimal SPIFFS").
 

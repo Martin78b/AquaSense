@@ -41,8 +41,8 @@ Reglas: las **masas (GND) de ambos circuitos se unen** con un cable entre el GND
 | Elemento | Conexión |
 |---|---|
 | Bomba 1, 2, 3 (control) | GPIO 25, 26, 27 → IN1, IN2, IN3 del ULN2003 |
-| Bombas (positivo) | Pin común del conector blanco del ULN2003 (el del cable rojo del motor) |
-| Bombas (negativo) | Salidas A, B y C del conector blanco |
+| Bombas (positivo) | Positivo (+5 V) de la fuente de energía (cable rojo compartido; no toman del pin C+ del ULN2003) |
+| Bombas (negativo) | Salidas A, B y C del conector blanco del ULN2003 (pin C+ libre) |
 | ULN2003 "+" y "−" | 5,1 V y GND del cargador de la Raspberry Pi (vía placa USB-C), con el jumper de alimentación puesto |
 | Sensores de humedad (señal) | GPIO 32, 33, 34 (todos de ADC1, que funciona con WiFi activo) |
 | Sensores de humedad (alimentación) | 3,3 V y GND del ESP32 (a 3,3 V para no superar el rango del ADC) |
