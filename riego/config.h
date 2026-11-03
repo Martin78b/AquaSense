@@ -4,8 +4,10 @@
 #include <Arduino.h>
 
 // ===================== DATOS FIJOS =====================
-#define ZONA_HORARIA "<-03>3"              // Argentina (UTC-3)
-#define NOMBRE_MDNS  "riego"               // http://riego.local
+#define AQUASENSE_VERSION "1.0.0"
+#define GITHUB_REPO       "Martin78b/AquaSense"
+#define ZONA_HORARIA      "<-03>3"              // Argentina (UTC-3)
+#define NOMBRE_MDNS       "riego"               // http://riego.local
 #define NTP_1        "pool.ntp.org"
 #define NTP_2        "time.google.com"
 

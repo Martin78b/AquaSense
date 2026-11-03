@@ -36,6 +36,7 @@ riego/                     carpeta del sketch (abrí riego.ino con el Arduino ID
 ├── pagina_web.h           página HTML con CSS y JavaScript embebidos
 ├── telegram.h / .cpp      tarea de Telegram (núcleo 0), colas y mutex
 ├── comandos.h / .cpp      comandos y textos de Telegram
+├── ota.h / .cpp           actualizaciones OTA (web local, GitHub Releases y Telegram)
 ├── utilidades.h / .cpp    hora, JSON y URL
 ├── secrets.example.h      plantilla de credenciales del WiFi
 └── secrets.h              tus credenciales (no se versiona)
@@ -115,8 +116,9 @@ Reglas de alimentación:
 4. Cargá tus credenciales (ver abajo).
 5. Abrí `riego/riego.ino`. Se abren todas las pestañas del proyecto.
 6. Elegí la placa **NodeMCU-32S** (o **ESP32 Dev Module**) y el puerto. Si no aparece el puerto, instalá el driver del CP2102.
-7. Tocá **Subir**. Si se queda en "Connecting…", mantené apretado el botón BOOT hasta que empiece a escribir.
-8. Abrí el monitor serie a **115200 baudios**: ahí aparece la IP. Entrá a `http://riego.local` o a esa IP desde un dispositivo de la misma red WiFi.
+7. En **Herramientas > Partition Scheme**, seleccioná **Minimal SPIFFS (1.9MB APP with OTA/190KB SPIFFS)** para habilitar actualizaciones OTA.
+8. Tocá **Subir**. Si se queda en "Connecting…", mantené apretado el botón BOOT hasta que empiece a escribir.
+9. Abrí el monitor serie a **115200 baudios**: ahí aparece la IP. Entrá a `http://riego.local` o a esa IP desde un dispositivo de la misma red WiFi.
 
 ### Con arduino-cli
 
@@ -208,8 +210,23 @@ Caudal 20 ml/s, calibración 2800 en seco y 1200 en mojado, sensores desactivado
 | `POST /api/detener` | Detiene el riego y vacía la cola |
 | `POST /api/pausa` | `on` = 1 o 0 |
 | `POST /api/telegram/prueba` | Envía un mensaje de prueba |
+| `GET /api/ota/info` | Información del sistema (versión, repo y memoria) |
+| `GET /api/ota/check` | Consulta la última release en GitHub |
+| `POST /api/ota/github` | Descarga e instala release desde GitHub |
+| `POST /api/ota/upload` | Subida e instalación de binario local (`.bin`) |
 
 La web no tiene contraseña: cualquier dispositivo de tu red WiFi puede usarla.
+
+## Actualizaciones inalámbricas (OTA)
+
+AquaSense permite actualizar el firmware por WiFi de tres formas distintas (todas detienen automáticamente las bombas y reinician la placa de forma segura):
+
+1. **Desde la Web con GitHub Releases:** En la pestaña **Sistema**, hacé click en **Buscar actualización en GitHub**. Si publicaste una versión más nueva con su `firmware.bin` adjunto, muestra las notas de versión y un botón para instalarla directamente.
+2. **Desde la Web con archivo local:** En la misma pestaña **Sistema**, seleccioná el archivo `firmware.bin` generado en tu computadora y hacé click en **Subir e instalar**. Muestra una barra de progreso en tiempo real.
+3. **Desde Telegram:** Enviá `/actualizar` para comprobar si hay una nueva versión. Si existe, respondé `/actualizar confirmar` para iniciar la descarga e instalación.
+
+> [!NOTE]
+> Requiere compilar con esquema de particiones **Minimal SPIFFS (1.9MB APP with OTA)** en Arduino IDE o `board_build.partitions = min_spiffs.csv` en PlatformIO (ya configurado por defecto).
 
 ## Carcasa para impresión 3D
 
@@ -227,7 +244,6 @@ En la carpeta [`3d/`](3d/) se incluye el modelo paramétrico [`carcasa_aquasense
 - Sensor de nivel del bidón en GPIO 14: bloquear las bombas si no hay agua, mostrarlo en la web y avisar por Telegram.
 - Piezas 3D complementarias: tapa adaptadora del bidón para mangueras, capuchón protector de sensores, soportes y difusores de maceta (la caja principal ya está disponible en [`3d/`](3d/)).
 - Validar el certificado de Telegram en lugar de `setInsecure()`.
-- Actualización por WiFi (OTA). El firmware ocupa cerca del 87 % de la partición por defecto, así que para OTA conviene elegir un esquema de particiones más grande (por ejemplo "Minimal SPIFFS").
 
 ## Licencia
 

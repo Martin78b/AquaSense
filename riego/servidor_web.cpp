@@ -4,6 +4,7 @@
 #include "pagina_web.h"
 #include "telegram.h"
 #include "utilidades.h"
+#include "ota.h"
 #include <WiFi.h>
 #include <WebServer.h>
 
@@ -197,6 +198,7 @@ void iniciarServidorWeb() {
   server.on("/api/detener", HTTP_POST, handleDetener);
   server.on("/api/pausa", HTTP_POST, handlePausa);
   server.on("/api/telegram/prueba", HTTP_POST, handlePrueba);
+  iniciarOTA(server);
   server.begin();
 }
 

@@ -55,7 +55,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--hortensia);outl
 <body><main>
 <div class="fila" style="justify-content:space-between"><h1><svg class="logo" viewBox="0 0 256 256" aria-hidden="true"><defs><clipPath id="gota-logo"><path d="M128 18C152 60 212 104 212 156A84 84 0 0 1 44 156C44 104 104 60 128 18Z"/></clipPath></defs><path d="M128 18C152 60 212 104 212 156A84 84 0 0 1 44 156C44 104 104 60 128 18Z" fill="#4a6fa5"/><g clip-path="url(#gota-logo)"><path d="M30 206Q79 192 128 204T226 200V260H30Z" fill="#8a6a4f"/><path d="M78 132C80 108 96 84 112 62" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="9" stroke-linecap="round"/></g><path d="M128 206V130" stroke="#dff0e3" stroke-width="9" stroke-linecap="round"/><path d="M128 164C102 164 84 148 80 120C106 118 126 134 128 164Z" fill="#dff0e3"/><path d="M128 144C130 114 152 94 184 94C182 124 158 144 128 144Z" fill="#9fd3aa"/></svg>Riego</h1><button class="chico" id="tema" onclick="cambiarTema()">Tema: automático</button></div>
 <div class="suave" id="hora">Conectando con el ESP32…</div>
-<nav class="pestanas" id="pestanas"><button data-t="estado" class="sel" onclick="mostrar('estado')">Estado</button><button data-t="general" onclick="mostrar('general')">Horarios</button><button data-t="telegram" onclick="mostrar('telegram')">Notificaciones</button></nav>
+<nav class="pestanas" id="pestanas"><button data-t="estado" class="sel" onclick="mostrar('estado')">Estado</button><button data-t="general" onclick="mostrar('general')">Horarios</button><button data-t="telegram" onclick="mostrar('telegram')">Notificaciones</button><button data-t="sistema" onclick="mostrar('sistema')">Sistema</button></nav>
 
 <section class="tab sel" id="t-estado">
 <h2>Macetas</h2>
@@ -97,6 +97,38 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--hortensia);outl
 <div class="msg" id="msgTg"></div>
 </section>
 
+<section class="tab" id="t-sistema">
+<h2>Sistema y Actualizaciones</h2>
+<div class="panel">
+<div class="campo"><span>Versión instalada</span><span style="font-weight:600" id="sisVer">v1.0.0</span></div>
+<div class="campo"><span>Repositorio GitHub</span><span class="suave" id="sisRepo">Martin78b/AquaSense</span></div>
+<div class="campo"><span>Memoria libre (Heap)</span><span class="suave" id="sisHeap">…</span></div>
+</div>
+
+<h2>Actualizar desde GitHub Releases</h2>
+<div class="panel">
+<div class="suave" style="padding:4px 0 10px">Verifica si hay una nueva versión publicada en GitHub y la descarga e instala automáticamente por WiFi.</div>
+<div class="fila"><button class="chico" id="btnCheckGh" onclick="verificarGh()">Buscar actualización en GitHub</button></div>
+<div id="ghRes" style="margin-top:10px"></div>
+</div>
+
+<h2>Actualizar desde archivo local (.bin)</h2>
+<div class="panel">
+<div class="suave" style="padding:4px 0 10px">Instalá directamente un archivo <code>firmware.bin</code> compilado en tu computadora (desde Arduino IDE o PlatformIO).</div>
+<div class="campo vertical" style="border-bottom:none">
+<input type="file" id="archivoBin" accept=".bin" style="width:100%">
+<div class="fila" style="margin-top:10px">
+<button id="btnSubirBin" onclick="subirBinLocal()">Subir e instalar firmware</button>
+</div>
+<div id="progresoLocal" style="display:none;margin-top:12px;width:100%">
+<div class="humedad"><div class="agua" id="barraProgreso" style="width:0%"></div></div>
+<div class="suave" id="txtProgreso" style="margin-top:4px">Subiendo 0%…</div>
+</div>
+</div>
+</div>
+<div class="msg" id="msgSis"></div>
+</section>
+
 <div id="config"></div>
 
 <div id="guardarBox" style="display:none;margin-top:16px">
@@ -126,10 +158,11 @@ function mostrar(id){
   pest=id;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('sel',t.id==='t-'+id));
   document.querySelectorAll('#pestanas button').forEach(b=>b.classList.toggle('sel',b.dataset.t===id));
-  $('guardarBox').style.display=id==='estado'?'none':'block';
+  $('guardarBox').style.display=(id==='estado'||id==='sistema')?'none':'block';
+  if(id==='sistema')cargarInfoSistema();
 }
 function pintarPestanas(){
-  const lista=[['estado','Estado'],['general','Horarios'],['telegram','Notificaciones']].concat(cfg.macetas.map((m,i)=>['m'+i,m.nombre]));
+  const lista=[['estado','Estado'],['general','Horarios'],['telegram','Notificaciones'],['sistema','Sistema']].concat(cfg.macetas.map((m,i)=>['m'+i,m.nombre]));
   $('pestanas').innerHTML=lista.map(([id,n])=>`<button data-t="${id}" onclick="mostrar('${id}')">${esc(n)}</button>`).join('');
   mostrar(pest);
 }
@@ -233,6 +266,116 @@ async function guardar(){
     if(r.ok){aviso('Ajustes guardados.',false);cargarConfig();}else aviso('El ESP32 rechazó los ajustes. Volvé a intentarlo.',true);}
   catch(e){aviso('No se pudo conectar con el ESP32. Los ajustes no se guardaron.',true);}
 }
+
+async function cargarInfoSistema(){
+  try{
+    const r=await fetch('/api/ota/info');
+    const d=await r.json();
+    $('sisVer').textContent='v'+d.version;
+    $('sisRepo').textContent=d.repo;
+    $('sisHeap').textContent=Math.round(d.heap/1024)+' KB';
+  }catch(e){}
+}
+
+async function verificarGh(){
+  const res=$('ghRes');res.innerHTML='<div class="suave">Consultando GitHub Releases…</div>';
+  try{
+    const r=await fetch('/api/ota/check');
+    const d=await r.json();
+    if(!d.ok){
+      res.innerHTML=`<div class="msg error">No se pudo verificar: ${esc(d.error)}</div>`;
+      return;
+    }
+    if(!d.nueva){
+      res.innerHTML=`<div class="aviso" style="margin-top:6px">✅ AquaSense está al día. Tenés instalada la versión más reciente (${esc(d.actual)}).</div>`;
+    }else{
+      res.innerHTML=`<div class="panel" style="background:var(--fondo);margin-top:6px">
+        <div style="font-weight:600;color:var(--hoja)">🚀 ¡Nueva versión disponible: ${esc(d.disponible)}!</div>
+        <div class="suave" style="margin:6px 0">${esc(d.notas||'Sin notas de versión')}</div>
+        <div class="fila" style="margin-top:8px">
+          <button onclick="instalarGh('${esc(d.disponible)}')">Instalar ${esc(d.disponible)} desde GitHub</button>
+        </div>
+      </div>`;
+    }
+  }catch(e){
+    res.innerHTML='<div class="msg error">Error al conectar con el ESP32.</div>';
+  }
+}
+
+async function instalarGh(ver){
+  if(!confirm(`¿Iniciar actualización a ${ver}? Se detendrá cualquier riego en curso y el ESP32 se reiniciará al finalizar.`)) return;
+  const res=$('ghRes');
+  res.innerHTML='<div class="aviso">⏳ Descargando e instalando firmware desde GitHub… La placa se reiniciará en unos 20-30 segundos. No cortes la energía.</div>';
+  try{
+    await fetch('/api/ota/github',{method:'POST'});
+    esperarReinicio('Actualización desde GitHub iniciada.');
+  }catch(e){
+    res.innerHTML='<div class="msg error">Error de conexión al iniciar actualización.</div>';
+  }
+}
+
+function subirBinLocal(){
+  const file=$('archivoBin').files[0];
+  if(!file){alert('Seleccioná un archivo .bin primero.');return;}
+  if(!confirm(`¿Instalar ${file.name}? Se detendrá cualquier riego en curso y el ESP32 se reiniciará.`)) return;
+
+  const xhr=new XMLHttpRequest();
+  const form=new FormData();
+  form.append('update',file);
+
+  $('progresoLocal').style.display='block';
+  $('btnSubirBin').disabled=true;
+
+  xhr.upload.addEventListener('progress',e=>{
+    if(e.lengthComputable){
+      const p=Math.round((e.loaded/e.total)*100);
+      $('barraProgreso').style.width=p+'%';
+      $('txtProgreso').textContent='Subiendo '+p+'% ('+Math.round(e.loaded/1024)+' KB / '+Math.round(e.total/1024)+' KB)...';
+    }
+  });
+
+  xhr.onload=()=>{
+    if(xhr.status===200){
+      $('txtProgreso').textContent='¡Subida completa! Reiniciando ESP32...';
+      esperarReinicio('Firmware subido con éxito.');
+    }else{
+      $('progresoLocal').style.display='none';
+      $('btnSubirBin').disabled=false;
+      alert('Error en actualización: '+xhr.responseText);
+    }
+  };
+
+  xhr.onerror=()=>{
+    $('progresoLocal').style.display='none';
+    $('btnSubirBin').disabled=false;
+    alert('Error de conexión durante la subida.');
+  };
+
+  xhr.open('POST','/api/ota/upload');
+  xhr.send(form);
+}
+
+function esperarReinicio(motivo){
+  $('hora').textContent=motivo+' Esperando que el ESP32 vuelva a estar en línea…';
+  let intentos=0;
+  const timer=setInterval(async()=>{
+    intentos++;
+    try{
+      const r=await fetch('/api/estado');
+      if(r.ok){
+        clearInterval(timer);
+        alert('AquaSense reiniciado correctamente.');
+        location.reload();
+      }
+    }catch(e){
+      if(intentos>35){
+        clearInterval(timer);
+        $('hora').textContent='Demoró más de lo esperado. Si la red cambió o tardó, recargá la página manualmente.';
+      }
+    }
+  },2000);
+}
+
 document.addEventListener('input',limpiar);
 cargarConfig().then(cargarEstado);
 setInterval(cargarEstado,3000);

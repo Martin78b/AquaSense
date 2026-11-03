@@ -25,6 +25,7 @@ static const char COMANDOS_JSON[] = R"json({"commands":[
 {"command":"pausa","description":"Pausar el riego automático"},
 {"command":"reanudar","description":"Reanudar el riego automático"},
 {"command":"horarios","description":"Ver los horarios de riego"},
+{"command":"actualizar","description":"Buscar o instalar actualizaciones desde GitHub"},
 {"command":"ayuda","description":"Ver la lista de comandos"}]})json";
 
 void tgBloquear() { xSemaphoreTake(mtx, portMAX_DELAY); }

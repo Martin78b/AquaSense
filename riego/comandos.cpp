@@ -3,6 +3,7 @@
 #include "control_riego.h"
 #include "telegram.h"
 #include "utilidades.h"
+#include "ota.h"
 
 static String textoAyuda() {
   return String("🌱 Comandos del riego\n\n") +
@@ -12,6 +13,7 @@ static String textoAyuda() {
          "/pausa: frena el riego automático (los manuales siguen andando)\n" +
          "/reanudar: retoma el riego automático\n" +
          "/horarios: muestra los horarios de riego\n" +
+         "/actualizar: busca o instala actualizaciones desde GitHub\n" +
          "/ayuda: muestra esta lista";
 }
 
@@ -112,6 +114,45 @@ void procesarComando(String t) {
       if (i < 0) notificar("No encontré esa maceta. Usá su número (1 a " + String(N) + "), parte del nombre o todas.");
       else if (!encolar(i, 't')) notificar(mac[i].nombre + " ya se está regando o está en espera.");
       else notificar("💧 Riego " + mac[i].nombre + ": " + String(mac[i].ml) + " ml.");
+    }
+  } else if (cmd == "/actualizar") {
+    if (arg == "confirmar" || arg == "instalar" || arg == "si") {
+      notificar("⏳ Verificando y descargando última versión desde GitHub... El riego se detendrá y el ESP32 se reiniciará al finalizar.");
+      String nVer, url, notas, err;
+      if (!otaVerificarGitHub(nVer, url, notas, err)) {
+        notificar("❌ No se pudo consultar GitHub: " + err);
+      } else if (otaActualizarDesdeUrl(url, err)) {
+        notificar("✅ ¡Actualización a " + nVer + " completada con éxito! Reiniciando el ESP32...");
+        delay(1500);
+        ESP.restart();
+      } else {
+        notificar("❌ Error durante la instalación OTA: " + err);
+      }
+    } else {
+      notificar("🔍 Buscando actualizaciones en GitHub (" + String(GITHUB_REPO) + ")...");
+      String nVer, url, notas, err;
+      if (!otaVerificarGitHub(nVer, url, notas, err)) {
+        notificar("❌ No se pudo consultar GitHub: " + err);
+      } else {
+        String actualLimpia = AQUASENSE_VERSION;
+        String nuevaLimpia = nVer;
+        if (actualLimpia.startsWith("v") || actualLimpia.startsWith("V")) actualLimpia = actualLimpia.substring(1);
+        if (nuevaLimpia.startsWith("v") || nuevaLimpia.startsWith("V")) nuevaLimpia = nuevaLimpia.substring(1);
+        bool nueva = (actualLimpia != nuevaLimpia);
+
+        if (!nueva) {
+          notificar("✅ AquaSense está al día.\nVersión instalada: v" + String(AQUASENSE_VERSION));
+        } else {
+          String msg = "🚀 ¡Nueva versión disponible en GitHub!\n\n"
+                       "• Versión actual: v" + String(AQUASENSE_VERSION) + "\n"
+                       "• Nueva versión: " + nVer + "\n";
+          if (notas.length() > 0) {
+            msg += "\nNotas de la versión:\n" + notas + "\n";
+          }
+          msg += "\nPara descargarla e instalarla ahora, respondé:\n/actualizar confirmar";
+          notificar(msg);
+        }
+      }
     }
   } else {
     notificar("No conozco ese comando. Mandá /ayuda para ver la lista.");
