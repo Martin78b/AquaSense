@@ -68,12 +68,13 @@ Podés ver el plano interactivo de cableado en [`docs/Cableado AquaSense.html`](
         ▼                                            ▼
 ┌───────────────────────┐                     + ─────┬───────────► + ULN2003
 │  ESP32 NodeMCU-32S    │                            ├───────────► + de las 3 bombas (rojo)
+│                       │                            ├ ─ ─ ─ ─ ─ ► VCC (marrón) XKC-Y25-NPN [hipotético]
 │                       │                            ═╧═ 1000 µF
 │                       │                     − ─────┴───────────► − ULN2003
 │  GPIO 25 ─────────────┼──► IN1 ULN2003                              ▲
 │  GPIO 26 ─────────────┼──► IN2 ULN2003                              │
 │  GPIO 27 ─────────────┼──► IN3 ULN2003                              │
-│  GND ─────────────────┼─────────────────── masas unidas ────────────┘
+│  GND ─────────────────┼─────────────────── masas unidas ────────────┴─ ─► GND (azul) XKC-Y25-NPN
 │  VIN (sin conectar)   │
 │                       │     ULN2003, conector blanco:
 │  3V3 ─────────────────┼──►  VCC de los 3 sensores     A ─────────────► − bomba 1
@@ -81,7 +82,8 @@ Podés ver el plano interactivo de cableado en [`docs/Cableado AquaSense.html`](
 │  GPIO 32 ◄────────────┼───  AOUT sensor 1             C ─────────────► − bomba 3
 │  GPIO 33 ◄────────────┼───  AOUT sensor 2             (C+ queda sin usar)
 │  GPIO 34 ◄────────────┼───  AOUT sensor 3
-│  GPIO 14 ◄────────────┼───  sensor de nivel (futuro, a GND, pull-up interno)
+│  GPIO 14 ◄ ─ ─ ─ ─ ─ ─┼─ ─  OUT (amarillo) sensor de nivel XKC-Y25-NPN [hipotético, pull-up interno]
+│                       │     (cable negro MODE del XKC-Y25-NPN: queda libre / sin conectar)
 │  BOOT (GPIO 0): riego manual de las tres macetas
 └───────────────────────┘
 ```
@@ -95,7 +97,7 @@ Podés ver el plano interactivo de cableado en [`docs/Cableado AquaSense.html`](
 | Capacitor de 1000 µF | Entre + y − en la entrada del ULN2003 (respetá la polaridad) |
 | Sensores de humedad (señal) | GPIO 32, 33, 34 (ADC1, que funciona con el WiFi activo) |
 | Sensores de humedad (alimentación) | 3,3 V y GND del ESP32 (los sensores V2.0.0 con TLC555 funcionan nativamente a 3,3 V y quedan dentro del rango del ADC) |
-| Sensor de nivel (futuro) | GPIO 14 y GND |
+| Sensor de nivel XKC-Y25-NPN (hipotético / futuro) | Marrón (VCC) → +5 V fuente externa; Azul (GND) → GND común; Amarillo (OUT) → GPIO 14 (con `INPUT_PULLUP` a 3,3 V); Negro (MODE) → sin conectar |
 
 Reglas de alimentación:
 

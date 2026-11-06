@@ -18,19 +18,25 @@ Variante del circuito del [README](../README.md#conexiones) para alimentar todo 
  USB 1 ──micro USB──► ESP32                    USB 2 (cable cortado)
                                                  rojo +5V ──┬──► ULN2003 "+"
  ESP32 GPIO 25 ──────────► ULN2003 IN1                      ├──► + de las 3 bombas (rojo)
- ESP32 GPIO 26 ──────────► ULN2003 IN2           [1000µF]   │   (jumper puesto)
- ESP32 GPIO 27 ──────────► ULN2003 IN3            + a "+"   │
- ESP32 GND ──────────────► ULN2003 "−" ◄─────────negro GND ─┘
+ ESP32 GPIO 26 ──────────► ULN2003 IN2           [1000µF]   ├─ ─► VCC (marrón) XKC-Y25-NPN [hipotético]
+ ESP32 GPIO 27 ──────────► ULN2003 IN3            + a "+"   │   (jumper puesto)
+ ESP32 GND ──────────────► ULN2003 "−" ◄─────────negro GND ─┴─ ─► GND (azul) XKC-Y25-NPN
                            (masas unidas, imprescindible)
 
  ULN2003, conector blanco de 5 pines:
    (el pin común C+ queda libre; las bombas toman +5 V directo de la fuente)
    A ──► − bomba 1    B ──► − bomba 2    C ──► − bomba 3
 
- Sensores:
+ Sensores de humedad:
    ESP32 3V3 ──► VCC de los 3 sensores
    ESP32 GND ──► GND de los 3 sensores
    GPIO 32 / 33 / 34 ◄── AOUT sensor 1 / 2 / 3
+
+ Sensor de nivel XKC-Y25-NPN (hipotético / futuro, en el exterior del bidón):
+   +5 V (USB 2) ─ ─► VCC (marrón, requiere 5–24 V)
+   GND común    ─ ─► GND (azul)
+   GPIO 14      ◄─ ─ OUT (amarillo, colector abierto NPN con pull-up interno a 3,3 V)
+   (sin usar)        MODE (negro, libre al aire)
 ```
 
 ## En la protoboard
